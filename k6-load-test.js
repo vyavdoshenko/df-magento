@@ -89,18 +89,18 @@ export default function () {
     sleep(Math.random() * 2 + 1); // 1-3 seconds
 }
 
-// Standard load test scenario (uncomment to use instead of stress test)
+// Stress test scenario (uncomment to use instead of standard load test)
 // export const options = {
 //     scenarios: {
-//         load_test: {
+//         stress_test: {
 //             executor: 'ramping-vus',
 //             startVUs: 0,
 //             stages: [
-//                 { duration: '30s', target: 20 },
-//                 { duration: '1m', target: 50 },
 //                 { duration: '2m', target: 100 },
-//                 { duration: '1m', target: 100 },
-//                 { duration: '30s', target: 0 },
+//                 { duration: '5m', target: 200 },
+//                 { duration: '2m', target: 300 },
+//                 { duration: '5m', target: 300 },
+//                 { duration: '2m', target: 0 },
 //             ],
 //         },
 //     },

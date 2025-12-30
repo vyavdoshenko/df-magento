@@ -94,6 +94,9 @@ Magento uses Dragonfly (Redis protocol) for:
 ├── docker-compose.yml        # Docker services
 ├── init.sh                   # PHP extensions setup
 ├── nginx.conf                # Nginx configuration
+├── setup-sample-data.sh      # Sample data installation
+├── k6-load-test.js           # k6 load testing script
+├── BENCHMARK.md              # Load testing documentation
 ├── magento/                  # Magento installation (auto-created)
 └── README.md
 ```
@@ -138,6 +141,34 @@ docker exec -it magento_app php -d memory_limit=2G /var/www/html/magento/bin/mag
 # Fix permissions
 docker exec -it magento_app bash -c "chown -R www-data:www-data /var/www/html/magento && chmod -R 777 /var/www/html/magento/var /var/www/html/magento/pub/static /var/www/html/magento/pub/media /var/www/html/magento/generated"
 ```
+
+## Sample Data & Load Testing
+
+### Install Sample Data
+
+Populate Magento with test products for realistic testing:
+
+```bash
+docker exec -it magento_app bash /var/www/html/setup-sample-data.sh
+```
+
+This installs:
+- 6 categories (Women, Men, Gear, Training, Sale)
+- 46 configurable products
+- 2000+ simple products
+- Sample customers and orders
+
+### Run Load Test
+
+Install [k6](https://k6.io/docs/getting-started/installation/), then:
+
+```bash
+MAGENTO_URL=http://192.168.0.126 k6 run k6-load-test.js
+```
+
+Default test: 100 concurrent users over 5 minutes.
+
+See [BENCHMARK.md](BENCHMARK.md) for detailed testing scenarios and metrics.
 
 ## Troubleshooting
 
