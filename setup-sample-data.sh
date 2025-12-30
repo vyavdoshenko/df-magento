@@ -11,6 +11,21 @@ echo "============================================"
 echo "  Magento Sample Data Setup"
 echo "============================================"
 
+# Step 0: Ensure Composer auth is configured
+echo ""
+echo "Step 0: Configuring Composer authentication..."
+mkdir -p ~/.composer
+cat > ~/.composer/auth.json << EOF
+{
+    "http-basic": {
+        "repo.magento.com": {
+            "username": "${ADOBE_PUBLIC_KEY}",
+            "password": "${ADOBE_PRIVATE_KEY}"
+        }
+    }
+}
+EOF
+
 # Step 1: Deploy official Magento sample data
 echo ""
 echo "Step 1: Installing Magento Sample Data..."
