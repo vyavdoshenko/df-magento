@@ -37,10 +37,6 @@ if [ -f "${MAGENTO_DIR}/bin/magento" ]; then
     if [ ! -f "app/etc/env.php" ]; then
         echo "Step 2: Installing Magento..."
 
-        # Wait for MySQL and OpenSearch to be ready
-        echo "Waiting for MySQL and OpenSearch..."
-        sleep 30
-
         php -d memory_limit=2G bin/magento setup:install \
           --base-url=http://${MAGENTO_IP}/ \
           --db-host=mysql \
@@ -72,11 +68,18 @@ if [ -f "${MAGENTO_DIR}/bin/magento" ]; then
         chmod -R 775 /var/www/html/magento
         chmod -R 777 /var/www/html/magento/var /var/www/html/magento/pub/static /var/www/html/magento/pub/media /var/www/html/magento/generated
 
-        echo "Step 5: Deploying static content..."
+        echo "Step 5: Compiling DI..."
+        php -d memory_limit=2G bin/magento setup:di:compile
+
+        echo "Step 6: Deploying static content..."
         php -d memory_limit=2G bin/magento setup:static-content:deploy -f
 
-        echo "Step 6: Reindexing..."
+        echo "Step 7: Reindexing..."
         php -d memory_limit=2G bin/magento indexer:reindex
+
+        echo "Step 8: Final permissions..."
+        chown -R www-data:www-data /var/www/html/magento
+        chmod -R 777 /var/www/html/magento/var /var/www/html/magento/pub/static /var/www/html/magento/pub/media /var/www/html/magento/generated
 
     else
         echo "Step 2: Magento already installed. Configuring Dragonfly..."
@@ -88,7 +91,7 @@ if [ -f "${MAGENTO_DIR}/bin/magento" ]; then
           --no-interaction
     fi
 
-    echo "Step 7: Flushing Magento cache..."
+    echo "Step 9: Flushing Magento cache..."
     php -d memory_limit=2G bin/magento cache:flush
 
     # Get admin URI
