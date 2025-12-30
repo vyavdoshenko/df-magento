@@ -11,20 +11,30 @@ echo "============================================"
 echo "  Magento Sample Data Setup"
 echo "============================================"
 
-# Step 0: Ensure Composer auth is configured
+# Step 0: Check Composer auth
 echo ""
-echo "Step 0: Configuring Composer authentication..."
-mkdir -p ~/.composer
-cat > ~/.composer/auth.json << EOF
-{
-    "http-basic": {
-        "repo.magento.com": {
-            "username": "${ADOBE_PUBLIC_KEY}",
-            "password": "${ADOBE_PRIVATE_KEY}"
-        }
-    }
-}
-EOF
+echo "Step 0: Checking Composer authentication..."
+
+# Auth should exist from configure-dragonfly.sh run
+if [ ! -f "${MAGENTO_DIR}/auth.json" ] && [ ! -f ~/.composer/auth.json ]; then
+    echo "ERROR: No auth.json found!"
+    echo ""
+    echo "auth.json should have been created by configure-dragonfly.sh"
+    echo "If missing, create it manually:"
+    echo ""
+    echo "docker exec -it magento_app bash -c 'cat > /var/www/html/magento/auth.json << EOF"
+    echo "{"
+    echo "    \"http-basic\": {"
+    echo "        \"repo.magento.com\": {"
+    echo "            \"username\": \"YOUR_PUBLIC_KEY\","
+    echo "            \"password\": \"YOUR_PRIVATE_KEY\""
+    echo "        }"
+    echo "    }"
+    echo "}"
+    echo "EOF'"
+    exit 1
+fi
+echo "Auth configured."
 
 # Step 1: Deploy official Magento sample data
 echo ""

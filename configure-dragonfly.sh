@@ -28,6 +28,9 @@ EOF
 
     # Create Magento in a subdirectory
     /usr/local/bin/composer create-project --repository-url=https://repo.magento.com magento/project-community-edition ${MAGENTO_DIR} --no-interaction
+
+    # Copy auth.json to project dir for future use (persists in mounted volume)
+    cp ~/.composer/auth.json ${MAGENTO_DIR}/auth.json
 fi
 
 if [ -f "${MAGENTO_DIR}/bin/magento" ]; then
